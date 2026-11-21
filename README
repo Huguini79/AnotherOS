@@ -1,0 +1,8 @@
+SYSCALLS:
+
+0x80 - user syscall
+
+------------
+|0x80 table|
+------------
+eax -> 4 -> write in screen | (arg0) ebx -> file descriptor | (arg1) ecx -> character to print | we ignore third argument (arg2)
