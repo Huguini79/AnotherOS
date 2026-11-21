@@ -16,6 +16,7 @@ void panic(const char* str)
         send_char(str[i]);
     }
 
+    panic_background();
     while (1) {}
 }
 
@@ -129,8 +130,14 @@ void pit_handler()
     jiffies += 1;
     second += 1;
 
+    if (second == 50)
+    {
+        move_light_cursor_vga();
+    }
+
     if (second == 100)
     {
+        delete_light_cursor_vga();
         Time.seconds++;
 
         if (Time.seconds == 60)
@@ -157,15 +164,116 @@ void pit_handler()
 
         second = 0;
 
-    printk("%i:%i:%i\n\n", Time.hour, Time.minutes, Time.seconds);
+        // clear_screen();
+
+    //move_cursor_vga((80/2) - 6, 0);
+    printk("\033[H");
+    printk("%i:%i:%i", Time.hour, Time.minutes, Time.seconds);
+    for (int i = 0; i < 80-8; i++)
+    {
+        printk("_");
+    }
+    delete_light_cursor_vga();
+    restore_last_pos_cursor();
 
     }
 
     outb(0x20, 0x20);
 }
 
+char keyboard_buf[1024];
+int pos = 0;
+
+void add_character(char c)
+{
+    keyboard_buf[pos++] = c;
+    keyboard_buf[pos] = 0;
+}
+
+void del_character()
+{
+    pos--;
+    keyboard_buf[pos] = 0;
+}
+
 void keyboard_handler()
 {
-    send_char('A');
+    unsigned char scancode = insb(0x60);
+
+    const char scancode_to_ascii[128] = {
+        0,   27,  '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '=', '\b', // 0x00 - 0x0E
+    '\t', 'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', '[', ']', '\n',    // 0x0F - 0x1C
+        0,  'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', ';', '\'', '`',          // 0x1D - 0x29
+        0,  '\\','z', 'x', 'c', 'v', 'b', 'n', 'm', ',', '.', '/',   0,           // 0x2A - 0x36
+    '*',   0, ' '                                                              // 0x37 - 0x39
+    };
+
+    if (scancode & 0x80)
+    {
+
+    } else
+    {
+        send_char(scancode_to_ascii[scancode]);
+
+        if (scancode_to_ascii[scancode] == '\b')
+        {
+            del_character();
+            put_c_vga_without_increment_x(' ');
+            move_light_cursor_vga();
+
+        } else if (scancode_to_ascii[scancode] == '\n')
+        {
+            if (strncmp(keyboard_buf, "help", 4) == 0)
+            {
+                printk("date echo clear\n");
+            
+            } else if (strncmp(keyboard_buf, "date", 4) == 0)
+            {
+                printk("%i:%i:%i\n", Time.hour, Time.minutes, Time.seconds);
+            
+            } else if (strncmp(keyboard_buf, "echo", 4) == 0)
+            {
+                size_t len = strlen(keyboard_buf);
+
+                for (size_t i = 5; i < len; i++)
+                {
+                    send_char(keyboard_buf[i]);
+                }
+
+                printk("\n");
+            
+            } else if (strncmp(keyboard_buf, "clear", 5) == 0)
+            {
+                clear_screen();
+                move_cursor_vga(0, 0);
+            }
+            
+            else if (strncmp(keyboard_buf, "", 1) == 0)
+            {
+                
+            }
+            
+            else
+            {
+                size_t len = strlen(keyboard_buf);
+                for (size_t i = 0; i < len; i++)
+                {
+                    send_char(keyboard_buf[i]);
+                }
+
+                printk(": command not found\n", keyboard_buf);
+            }
+
+            send_char('#');
+            send_char(' ');
+            keyboard_buf[0] = 0;
+            pos = 0;
+
+        } else
+        {
+            add_character(scancode_to_ascii[scancode]);
+        }
+    }
+
     outb(0x20, 0x20);
 }

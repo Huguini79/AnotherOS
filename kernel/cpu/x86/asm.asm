@@ -186,6 +186,13 @@ virtualization_exception_stub:
     popad
     iretd
 
+pit_stub:
+    pushad
+    push esp
+    call pit_handler
+    popad
+    iret
+
 keyboard_stub:
     pushad
     call keyboard_handler

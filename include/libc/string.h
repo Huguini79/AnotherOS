@@ -16,6 +16,48 @@ static inline size_t strlen(const char* str)
     return i;
 }
 
+static inline int isnum(char c)
+{
+    if (c == '0'
+        || c == '1'
+        || c == '2'
+        || c == '3'
+        || c == '4'
+        || c == '5'
+        || c == '6'
+        || c == '7'
+        || c == '8'
+        || c == '9')
+    {
+        return 1;
+    }
+
+    return 0;
+}
+
+static inline int strncmp(const char* str1, const char* str2, int len)
+{
+    unsigned char u1,u2;
+
+    for (int i = 0; i < len; i++)
+    {
+        u1 = (unsigned char)*str1++;
+        u2 = (unsigned char)*str2++;
+
+        if (u1 != u2)
+        {
+            return str2 - str1;
+        }
+
+        if (u2 == 0)
+        {
+            break;
+        }
+    }
+
+    return 0;
+}
+
 static inline char * itoa( int value, char * str, int base )
 {
     char * rc;

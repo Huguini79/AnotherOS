@@ -82,7 +82,7 @@ void IdtInstall()
     setIdtDescriptor(0x17, 0x8E, alignment_check_stub);
     setIdtDescriptor(0x18, 0x8E, machine_check_stub);
     setIdtDescriptor(0x19, 0x8E, simd_floating_point_exception_stub);
-    setIdtDescriptor(0x20, 0x8E, pit_handler); // OJO: usando la stub de ensamblador da double fault, con handler no pasa
+    setIdtDescriptor(0x20, 0x8F, pit_handler); // OJO: usando la stub de ensamblador da double fault, con handler no pasa
     setIdtDescriptor(0x21, 0x8E, keyboard_stub);
 
     idtr.limit = sizeof(idt_table) - 1;

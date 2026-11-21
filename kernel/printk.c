@@ -21,7 +21,34 @@ void printk(const char* fmt, ...)
                 printk(buf);
             }
         
-        } else
+        } else if (fmt[i] == '\033' || fmt[i] == '\e')
+        {
+            i++;
+            if (fmt[i] == '[')
+            {
+                i++;
+
+                if (fmt[i] == 'H')
+                {
+                    move_cursor_vga(0, 0);
+                
+                } else if (fmt[i] == '2')
+                {
+                    i++;
+                    if (fmt[i] == 'J')
+                    {
+                        clear_screen();
+                    
+                    }
+
+                }
+            }
+        } else if (fmt[i] == '\b')
+        {
+            backspace_vga();
+        }
+        
+        else
         {
             send_char(fmt[i]);
         }

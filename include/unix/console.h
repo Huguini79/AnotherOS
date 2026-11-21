@@ -6,6 +6,15 @@
 extern void init_vga();
 extern void put_c_coord_vga(char c, int x, int y);
 extern void put_c_vga(char c);
+extern void put_c_vga_without_increment_x(char c);
+extern void clear_screen();
+extern void backspace_vga();
+extern void forward_vga();
+extern void move_light_cursor_vga();
+extern void delete_light_cursor_vga();
+extern void move_cursor_vga(int x, int y);
+extern void restore_last_pos_cursor();
+extern void panic_background();
 /*                                                  */
 
 /* DISPLAY SERVICE */
