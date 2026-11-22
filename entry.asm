@@ -14,6 +14,8 @@ extern kernel_main
 
 start:
     cli
+    push dword 0x202
+    popfd
     call kernel_main
     hlt
 

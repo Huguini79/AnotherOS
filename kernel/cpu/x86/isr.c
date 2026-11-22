@@ -225,7 +225,7 @@ void keyboard_handler()
         {
             if (strncmp(keyboard_buf, "help", 4) == 0)
             {
-                printk("date echo clear\n");
+                printk("date echo clear triangle\n");
             
             } else if (strncmp(keyboard_buf, "date", 4) == 0)
             {
@@ -242,7 +242,29 @@ void keyboard_handler()
 
                 printk("\n");
             
-            } else if (strncmp(keyboard_buf, "clear", 5) == 0)
+            } else if (strncmp(keyboard_buf, "triangle", 8) == 0)
+            {
+                int y = 1;
+                for (int i = 5; i > 0; i--)
+                {
+                    for (int j = 0; j < i; j++)
+                    {
+                        printk(" ");
+                    }
+
+                    for (int j = 0; j < y; j++)
+                    {
+                        printk("*");
+                    }
+
+                    y += 2;
+                    printk("\n");
+
+                    printk("\n");
+                }
+            }
+            
+            else if (strncmp(keyboard_buf, "clear", 5) == 0)
             {
                 clear_screen();
                 move_cursor_vga(0, 0);

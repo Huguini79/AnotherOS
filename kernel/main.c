@@ -17,6 +17,8 @@ void pit_init()
     outb(0x40, divisor >> 8);
 }
 
+extern void kernel_identity_mapping();
+
 void kernel_main()
 {
     pit_init();
@@ -26,9 +28,13 @@ void kernel_main()
     IdtInstall();
     set_graphics_card(VGA); // Select VGA display (80x25x8bpp)
     init_vga(); // Init VGA display
+    kernel_identity_mapping();
 
-    while (1) 
-    {
-        __asm__ volatile ("sti");
-    }
+    send_char();
+
+    printk("\n\n# ");
+
+    __asm__ volatile ("sti");
+
+    while (1) {}
 }

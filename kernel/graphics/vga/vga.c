@@ -28,7 +28,7 @@ void put_c_coord_vga(char c, int x, int y)
 
 void backspace_vga()
 {
-    if (x_vga <= 2)
+    if (x_vga <= 2 && (fb[(y_vga * (VGA_WIDTH)) + (x_vga-2)] & 0xFF) == '#')
     {
         
     } else
@@ -190,7 +190,7 @@ void clear_screen()
     {
         for (int j = 0; j < VGA_WIDTH; j++)
         {
-            put_c_coord_vga(' ', i, j);
+            put_c_coord_vga(' ', j, i);
         }
     }
 }
